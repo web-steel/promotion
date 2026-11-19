@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0b0614">
+<meta name="theme-color" content="#030106">
 <title>Кальянная акция — таймер</title>
 <meta name="description" content="Сколько осталось до ночной акции в кальянной. Минское время.">
 <style>
   :root {
-    --bg: #0b0614;
-    --bg-2: #160a2b;
+    --bg: #030106;
+    --bg-2: #0e0620;
     --text: #f4eefc;
     --muted: #a99bc4;
     --accent: #ff4fd8;
@@ -35,7 +35,7 @@
   /* ---------- дым на фоне ---------- */
   .smoke { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
   .blob {
-    position: absolute; border-radius: 50%; filter: blur(70px); opacity: .45;
+    position: absolute; border-radius: 50%; filter: blur(80px); opacity: .26;
     will-change: transform;
   }
   .b1 { width: 55vmax; height: 55vmax; left: -15vmax; top: -10vmax;
@@ -46,7 +46,7 @@
         animation: drift2 26s ease-in-out infinite alternate; }
   .b3 { width: 45vmax; height: 45vmax; left: 10vw; bottom: -22vmax;
         background: radial-gradient(circle, var(--accent-3), transparent 65%);
-        opacity: .3;
+        opacity: .16;
         animation: drift3 30s ease-in-out infinite alternate; }
   @keyframes drift1 { to { transform: translate(18vmax, 12vmax) scale(1.15); } }
   @keyframes drift2 { to { transform: translate(-16vmax, -8vmax) scale(1.2); } }
@@ -56,7 +56,7 @@
   .ring {
     position: absolute; bottom: -40px; left: var(--x);
     width: var(--s); height: calc(var(--s) * .55);
-    border: 3px solid rgba(255,255,255,.35);
+    border: 3px solid rgba(255,255,255,.22);
     border-radius: 50%; filter: blur(3px); opacity: 0;
     animation: rise var(--d) linear infinite; animation-delay: var(--delay);
   }
@@ -66,9 +66,32 @@
     100% { transform: translateY(-105vh) translateX(var(--sway)) scale(1.9); opacity: 0; }
   }
 
+
+  /* ---------- кальяны и дым ---------- */
+  .hookah {
+    position: fixed; bottom: -2vh; z-index: 0; pointer-events: none;
+    aspect-ratio: 240 / 500; color: var(--accent-2);
+    filter: drop-shadow(0 0 28px rgba(122,92,255,.28));
+    transition: color .8s ease;
+  }
+  .hookah svg { width: 100%; height: 100%; display: block; }
+  .hk-l { left: -2vw; height: min(88vh, 860px); opacity: .8; }
+  .hk-r { right: 1vw; height: min(70vh, 680px); opacity: .5; transform: scaleX(-1); filter: blur(1.5px) drop-shadow(0 0 28px rgba(122,92,255,.2)); }
+  body.live .hookah { color: var(--go); filter: drop-shadow(0 0 28px rgba(77,255,176,.25)); }
+  body.live .hk-r { filter: blur(1.5px) drop-shadow(0 0 28px rgba(77,255,176,.18)); }
+  #smoke-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+  .vignette {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 45%, transparent 35%, rgba(0,0,0,.7) 100%);
+  }
+  @media (max-width: 640px) {
+    .hk-l { left: -14vw; height: 68vh; opacity: .6; }
+    .hk-r { right: -12vw; height: 52vh; opacity: .4; }
+  }
+
   /* ---------- контент ---------- */
   main {
-    position: relative; z-index: 1;
+    position: relative; z-index: 2;
     width: min(960px, 100%);
     text-align: center;
   }
@@ -113,9 +136,9 @@
     font-variant-numeric: tabular-nums;
     letter-spacing: -.02em;
     border-radius: .14em;
-    background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
-    border: 1px solid rgba(255,255,255,.16);
-    box-shadow: 0 20px 60px rgba(122,92,255,.25), inset 0 1px 0 rgba(255,255,255,.2);
+    background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.015));
+    border: 1px solid rgba(255,255,255,.11);
+    box-shadow: 0 20px 60px rgba(0,0,0,.55), 0 0 50px rgba(122,92,255,.12), inset 0 1px 0 rgba(255,255,255,.14);
     backdrop-filter: blur(10px);
     background-clip: padding-box;
     position: relative;
@@ -145,7 +168,7 @@
 
   /* ---------- режим «акция идёт» ---------- */
   .go { display: none; }
-  body.live { background: radial-gradient(120% 90% at 50% 0%, #0d2a2a 0%, #060f14 62%); }
+  body.live { background: radial-gradient(120% 90% at 50% 0%, #07201e 0%, #020608 62%); }
   body.live .timer, body.live .count-only { display: none; }
   body.live .go { display: block; animation: pop .8s cubic-bezier(.2,1.4,.4,1) both; }
   body.live .b1 { background: radial-gradient(circle, var(--go), transparent 65%); }
@@ -184,6 +207,52 @@
 <body>
   <div class="smoke" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
   <div class="rings" id="rings" aria-hidden="true"></div>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="glass" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0" stop-color="#2d1858"/><stop offset=".45" stop-color="#140a2a"/><stop offset="1" stop-color="#06030e"/>
+      </linearGradient>
+      <linearGradient id="metal" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0" stop-color="#0a0514"/><stop offset=".35" stop-color="#3a2a66"/><stop offset=".6" stop-color="#1c1236"/><stop offset="1" stop-color="#08040f"/>
+      </linearGradient>
+      <radialGradient id="coal">
+        <stop offset="0" stop-color="#ffd27a"/><stop offset=".35" stop-color="#ff6a1f" stop-opacity=".85"/><stop offset="1" stop-color="#ff3d00" stop-opacity="0"/>
+      </radialGradient>
+      <symbol id="hk" viewBox="0 0 240 500">
+        <!-- шланг -->
+        <path d="M138 302 C 225 288, 232 385, 196 446" fill="none" stroke="#150a2b" stroke-width="10" stroke-linecap="round"/>
+        <path d="M138 302 C 225 288, 232 385, 196 446" fill="none" stroke="currentColor" stroke-opacity=".55" stroke-width="10" stroke-linecap="round" stroke-dasharray="1.5 5"/>
+        <rect x="188" y="440" width="16" height="22" rx="6" transform="rotate(28 196 446)" fill="url(#metal)" stroke="currentColor" stroke-opacity=".5"/>
+        <!-- колба -->
+        <path d="M88 262 C 88 292, 30 322, 30 396 C 30 452, 62 482, 100 482 C 138 482, 170 452, 170 396 C 170 322, 112 292, 112 262 Z"
+              fill="url(#glass)" stroke="currentColor" stroke-opacity=".5" stroke-width="1.5"/>
+        <path d="M38 392 C 38 452, 64 476, 100 476 C 136 476, 162 452, 162 392 Q100 408 38 392 Z" fill="currentColor" opacity=".16"/>
+        <path d="M50 338 C 44 380 50 432 70 458" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="5" stroke-linecap="round"/>
+        <ellipse cx="100" cy="486" rx="44" ry="8" fill="#050209" stroke="currentColor" stroke-opacity=".35"/>
+        <!-- порт шланга -->
+        <path d="M112 296 L140 294 L140 310 L114 312 Z" fill="url(#metal)" stroke="currentColor" stroke-opacity=".5"/>
+        <!-- стойка -->
+        <path d="M91 88 H109 L111 266 H89 Z" fill="url(#metal)" stroke="currentColor" stroke-opacity=".4"/>
+        <rect x="82" y="258" width="36" height="14" rx="4" fill="url(#metal)" stroke="currentColor" stroke-opacity=".5"/>
+        <ellipse cx="100" cy="240" rx="21" ry="5" fill="url(#metal)" stroke="currentColor" stroke-opacity=".45"/>
+        <circle cx="100" cy="200" r="13" fill="url(#metal)" stroke="currentColor" stroke-opacity=".5"/>
+        <ellipse cx="100" cy="158" rx="27" ry="6" fill="url(#metal)" stroke="currentColor" stroke-opacity=".45"/>
+        <circle cx="100" cy="126" r="10" fill="url(#metal)" stroke="currentColor" stroke-opacity=".5"/>
+        <!-- тарелка и чаша -->
+        <ellipse cx="100" cy="88" rx="62" ry="9" fill="url(#metal)" stroke="currentColor" stroke-opacity=".5"/>
+        <path d="M62 34 L138 34 L124 78 Q100 88 76 78 Z" fill="url(#metal)" stroke="currentColor" stroke-opacity=".5"/>
+        <ellipse cx="100" cy="34" rx="38" ry="7" fill="#1a0a08" stroke="currentColor" stroke-opacity=".5"/>
+        <ellipse cx="100" cy="30" rx="34" ry="15" fill="url(#coal)">
+          <animate attributeName="opacity" values=".55;1;.7;1;.6" dur="3.2s" repeatCount="indefinite"/>
+        </ellipse>
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="hookah hk-l" data-bx="0.4167" aria-hidden="true"><svg viewBox="0 0 240 500"><use href="#hk"/></svg></div>
+  <div class="hookah hk-r" data-bx="0.5833" aria-hidden="true"><svg viewBox="0 0 240 500"><use href="#hk"/></svg></div>
+  <canvas id="smoke-canvas" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
 
   <main>
     <div class="badge"><span class="dot"></span><span id="badge">Минск · акция в 00:00</span></div>
@@ -296,7 +365,7 @@
 
   // кольца дыма
   var rings = document.getElementById('rings');
-  for (var i = 0; i < 9; i++) {
+  for (var i = 0; i < 4; i++) {
     var r = document.createElement('div');
     r.className = 'ring';
     r.style.setProperty('--x', (Math.random() * 90 + 2).toFixed(1) + '%');
@@ -307,13 +376,102 @@
     rings.appendChild(r);
   }
 
-  document.getElementById('cta').addEventListener('click', function (e) {
-    e.preventDefault();
-    // сюда можно подставить ссылку на кальянную / чат друзей / карту
-  });
+  // Ссылка на ваш чат в Telegram: https://t.me/+xxxxxxxx (приватная группа) или https://t.me/username (публичная)
+  var TG_URL = '';
+  var cta = document.getElementById('cta');
+  if (TG_URL) { cta.href = TG_URL; cta.target = '_blank'; cta.rel = 'noopener'; }
+  else cta.addEventListener('click', function (e) { e.preventDefault(); });
 
   render();
   setInterval(render, 250);
+
+  // ---------- дым: частицы из чаш кальянов ----------
+  (function () {
+    var cv = document.getElementById('smoke-canvas');
+    if (!cv.getContext || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var ctx = cv.getContext('2d'), W = 0, H = 0, dpr = 1;
+    var hookahs = [].slice.call(document.querySelectorAll('.hookah'));
+
+    function sprite(rgb) {
+      var c = document.createElement('canvas'); c.width = c.height = 128;
+      var g = c.getContext('2d'), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+      gr.addColorStop(0, 'rgba(' + rgb + ',.9)');
+      gr.addColorStop(.4, 'rgba(' + rgb + ',.35)');
+      gr.addColorStop(1, 'rgba(' + rgb + ',0)');
+      g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+      return c;
+    }
+    var SP = { idle: sprite('214,196,255'), live: sprite('190,255,225') };
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = innerWidth; H = innerHeight;
+      cv.width = W * dpr; cv.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    addEventListener('resize', resize); resize();
+
+    var parts = [], MAX = 800, small = function () { return W < 640; };
+
+    function spawn(x, y, big, amb) {
+      if (parts.length >= MAX) return;
+      var life = 380 + Math.random() * 300;
+      parts.push({
+        x: x, y: y,
+        vy: (big ? .9 : .7) + Math.random() * .8,
+        vx: (Math.random() - .5) * .35,
+        size: (big ? 34 : 12) + Math.random() * 18,
+        grow: big ? .14 + Math.random() * .16 : .07 + Math.random() * .12,
+        life: 0, max: life,
+        a: big ? (amb ? .07 : .22) + Math.random() * .08 : .16 + Math.random() * .14,
+        seed: Math.random() * 1000,
+        sway: .25 + Math.random() * .55
+      });
+    }
+    function source(el) {
+      var r = el.getBoundingClientRect();
+      return { x: r.left + r.width * parseFloat(el.dataset.bx), y: r.top + r.height * .05 };
+    }
+
+    var last = performance.now(), acc = 0, nextPuff = 2500;
+    function frame(now) {
+      var dt = Math.min((now - last) / 16.667, 3); last = now;
+      if (!document.hidden) {
+        var rate = small() ? .4 : .55;
+        acc += rate * dt;
+        while (acc >= 1) {
+          acc -= 1;
+          hookahs.forEach(function (h) { var s = source(h); spawn(s.x + (Math.random() - .5) * 18, s.y, false); });
+          if (Math.random() < .12) spawn(Math.random() * W, H + 40, true, true);   // дым по всей странице снизу
+        }
+        nextPuff -= dt * 16.667;
+        if (nextPuff <= 0) {                                                // «выдох» — густой клуб
+          nextPuff = 5000 + Math.random() * 5000;
+          var h = hookahs[Math.floor(Math.random() * hookahs.length)], s = source(h);
+          for (var k = 0; k < 22; k++) spawn(s.x + (Math.random() - .5) * 30, s.y - Math.random() * 20, true);
+        }
+
+        ctx.clearRect(0, 0, W, H);
+        var img = document.body.classList.contains('live') ? SP.live : SP.idle;
+        for (var i = parts.length - 1; i >= 0; i--) {
+          var p = parts[i];
+          p.life += dt;
+          if (p.life >= p.max) { parts.splice(i, 1); continue; }
+          var t = p.life / p.max;
+          p.y -= p.vy * dt;
+          p.x += (p.vx + Math.sin(p.life * .02 + p.seed) * p.sway) * dt;
+          p.size += p.grow * dt;
+          var alpha = p.a * Math.min(1, t / .12) * Math.pow(1 - t, 1.6);
+          if (alpha <= .002) continue;
+          ctx.globalAlpha = alpha;
+          ctx.drawImage(img, p.x - p.size, p.y - p.size, p.size * 2, p.size * 2);
+        }
+        ctx.globalAlpha = 1;
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
 })();
 </script>
 </body>
