@@ -199,6 +199,16 @@
   }
   @keyframes bump { 50% { transform: scale(1.06); } }
 
+  .early {
+    display: inline-block; margin-top: clamp(22px, 5vh, 40px);
+    padding: 11px 20px; border-radius: 999px; text-decoration: none;
+    font-size: clamp(13px, 3.2vw, 15px); color: var(--muted);
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12);
+    backdrop-filter: blur(8px); transition: color .2s, border-color .2s, background .2s;
+  }
+  .early b { color: var(--text); font-weight: 700; }
+  .early:hover, .early:focus-visible { color: var(--text); border-color: rgba(255,255,255,.3); background: rgba(255,255,255,.09); }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
@@ -280,6 +290,8 @@
       <a class="cta" href="#" id="cta">Погнали 💨</a>
       <p class="foot" style="margin-top:22px">Акция действует до <b>04:00</b></p>
     </section>
+
+    <a class="early" href="morning.html">Рано вставать или грязная голова? <b>Читай сюда</b> <span aria-hidden="true">→</span></a>
   </main>
 
 <script>

@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#030106">
+<title>Рано вставать или грязная голова? Всё равно идём</title>
+<meta name="description" content="Все аргументы, почему стоит собраться и сгонять на кальян, даже если завтра рано вставать или голова грязная.">
+<style>
+  :root {
+    --bg: #030106; --bg-2: #0e0620;
+    --text: #f4eefc; --muted: #a99bc4;
+    --accent: #ff4fd8; --accent-2: #7a5cff; --accent-3: #27e1ff;
+    --go: #4dffb0; --go-2: #ffd84d;
+    --card: rgba(255,255,255,.045); --line: rgba(255,255,255,.11);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(120% 90% at 50% 0%, var(--bg-2) 0%, var(--bg) 60%) fixed;
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100dvh; overflow-x: hidden;
+    line-height: 1.5;
+  }
+
+  /* фон: дым и виньетка */
+  .smoke { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .26; will-change: transform; }
+  .b1 { width: 55vmax; height: 55vmax; left: -15vmax; top: -10vmax; background: radial-gradient(circle, var(--accent-2), transparent 65%); animation: d1 22s ease-in-out infinite alternate; }
+  .b2 { width: 50vmax; height: 50vmax; right: -18vmax; top: 25vh; background: radial-gradient(circle, var(--accent), transparent 65%); animation: d2 26s ease-in-out infinite alternate; }
+  .b3 { width: 45vmax; height: 45vmax; left: 10vw; bottom: -22vmax; background: radial-gradient(circle, var(--accent-3), transparent 65%); opacity: .16; animation: d3 30s ease-in-out infinite alternate; }
+  @keyframes d1 { to { transform: translate(18vmax, 12vmax) scale(1.15); } }
+  @keyframes d2 { to { transform: translate(-16vmax, -8vmax) scale(1.2); } }
+  @keyframes d3 { to { transform: translate(14vmax, -12vmax) scale(.9); } }
+  .rings { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .ring { position: absolute; bottom: -40px; left: var(--x); width: var(--s); height: calc(var(--s) * .55);
+    border: 3px solid rgba(255,255,255,.2); border-radius: 50%; filter: blur(3px); opacity: 0;
+    animation: rise var(--d) linear infinite; animation-delay: var(--delay); }
+  @keyframes rise {
+    0% { transform: translateY(0) scale(.6); opacity: 0; }
+    15% { opacity: .5; }
+    100% { transform: translateY(-105vh) translateX(var(--sway)) scale(1.9); opacity: 0; }
+  }
+  .vignette { position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 40%, transparent 35%, rgba(0,0,0,.65) 100%); }
+
+  main { position: relative; z-index: 2; width: min(760px, 100%); margin: 0 auto; padding: 28px 16px 64px; }
+
+  .back { display: inline-block; color: var(--muted); text-decoration: none; font-size: 14px; letter-spacing: .04em; padding: 8px 0; }
+  .back:hover { color: var(--text); }
+
+  header { text-align: center; margin: 18px 0 34px; }
+  .badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px;
+    background: rgba(255,255,255,.06); border: 1px solid var(--line); backdrop-filter: blur(8px);
+    font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  h1 { margin: 22px auto 10px; font-size: clamp(30px, 8vw, 56px); line-height: 1.08; font-weight: 900; letter-spacing: -.02em; text-wrap: balance;
+    background: linear-gradient(95deg, #fff, #d8c8ff 60%, var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lead { color: var(--muted); font-size: clamp(16px, 3.8vw, 20px); max-width: 34ch; margin: 0 auto; text-wrap: balance; }
+
+  h2 { font-size: clamp(20px, 4.6vw, 26px); margin: 44px 0 16px; letter-spacing: -.01em; }
+  h2 small { display: block; font-size: 14px; font-weight: 400; color: var(--muted); margin-top: 4px; letter-spacing: 0; }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px;
+    backdrop-filter: blur(8px); box-shadow: 0 16px 50px rgba(0,0,0,.4); }
+
+  /* аргументы */
+  .args { display: grid; gap: 12px; counter-reset: arg; }
+  .arg { position: relative; padding-left: 64px; }
+  .arg::before { counter-increment: arg; content: counter(arg);
+    position: absolute; left: 18px; top: 16px; width: 32px; height: 32px; border-radius: 50%;
+    display: grid; place-items: center; font-weight: 800; font-size: 15px; color: #04130d;
+    background: linear-gradient(135deg, var(--go), var(--go-2)); }
+  .arg b { display: block; font-size: 17px; margin-bottom: 2px; }
+  .arg span { color: var(--muted); font-size: 15px; }
+
+  /* калькулятор сна */
+  .calc { display: grid; gap: 14px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  label { display: grid; gap: 6px; font-size: 13px; color: var(--muted); letter-spacing: .04em; }
+  input[type=time] { font: inherit; font-size: 20px; font-weight: 700; color: var(--text); background: rgba(0,0,0,.35);
+    border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; color-scheme: dark; width: 100%; }
+  input[type=time]:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+  .result { text-align: center; padding-top: 4px; }
+  .hours { font-size: clamp(40px, 11vw, 64px); font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums;
+    background: linear-gradient(95deg, var(--go), var(--go-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .verdict { margin-top: 8px; color: var(--text); font-size: 16px; text-wrap: balance; }
+
+  /* чек-лист */
+  .steps { list-style: none; display: grid; gap: 10px; }
+  .steps li label { display: flex; align-items: flex-start; gap: 14px; cursor: pointer; padding: 14px 16px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px; font-size: 16px; color: var(--text); letter-spacing: 0; transition: background .2s, border-color .2s; }
+  .steps input { appearance: none; flex: none; width: 24px; height: 24px; margin-top: 1px; border-radius: 8px;
+    border: 2px solid var(--muted); display: grid; place-items: center; cursor: pointer; transition: .2s; }
+  .steps input:checked { background: linear-gradient(135deg, var(--go), var(--go-2)); border-color: transparent; }
+  .steps input:checked::after { content: "✓"; color: #04130d; font-weight: 900; font-size: 15px; }
+  .steps input:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+  .steps li:has(input:checked) label { border-color: rgba(77,255,176,.4); background: rgba(77,255,176,.06); }
+  .steps li:has(input:checked) .t { text-decoration: line-through; color: var(--muted); }
+  .steps .t small { display: block; color: var(--muted); font-size: 14px; }
+  .done { margin-top: 12px; text-align: center; color: var(--go); font-weight: 700; min-height: 1.5em; }
+
+  .actions { margin-top: 46px; text-align: center; display: grid; gap: 14px; justify-items: center; }
+  .cta { display: inline-block; text-decoration: none; padding: 16px 34px; border-radius: 999px; font-size: 18px; font-weight: 800;
+    color: #04130d; background: linear-gradient(95deg, var(--go), var(--go-2)); box-shadow: 0 10px 40px rgba(77,255,176,.35);
+    animation: bump 1.6s ease-in-out infinite; }
+  @keyframes bump { 50% { transform: scale(1.05); } }
+  .ghost { color: var(--muted); font-size: 14px; }
+  .ghost a { color: var(--text); }
+  .note { margin-top: 40px; text-align: center; color: #7d7096; font-size: 12px; }
+
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+  <div class="smoke" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+  <div class="rings" id="rings" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <main>
+    <a class="back" href="index.html">← к таймеру</a>
+
+    <header>
+      <span class="badge">Рано вставать · грязная голова</span>
+      <h1>Рано вставать или голова грязная? Не повод пропускать акцию</h1>
+      <p class="lead">Мы собрали аргументы, расчёты и чек-лист. Дочитай до конца — и ты уже в такси.</p>
+    </header>
+
+    <section>
+      <h2>Почему надо ехать <small>Аргументы против «рано вставать» и против «грязной головы».</small></h2>
+      <div class="args">
+        <div class="card arg"><b>Акция бывает раз в сутки</b><span>А понедельников у тебя впереди ещё сотни. Что дороже?</span></div>
+        <div class="card arg"><b>Через 10 лет ты не вспомнишь завтрашнюю планёрку</b><span>Зато вспомнишь, как вы вчетвером сидели в дыму и ржали до ночи.</span></div>
+        <div class="card arg"><b>Без тебя это просто трое грустных людей</b><span>Компания ровно из четырёх. Если ты не едешь, стол выглядит сиротливо.</span></div>
+        <div class="card arg"><b>Кофе придумали не просто так</b><span>Утром два эспрессо, и ты снова человек. Проверено поколениями.</span></div>
+        <div class="card arg"><b>Голова грязная? Это не проблема</b><span>В кальянной полумрак, в дыму всё равно никто не заметит. Сзади всё закроет кепка или шапка.</span></div>
+        <div class="card arg"><b>Помыть голову можно за 7 минут</b><span>Включил таймер на главной, сходил в душ, высушил волосы. Ты успеваешь, даже если акция уже началась.</span></div>
+        <div class="card arg"><b>Друзья смотрят на компанию, а не на причёску</b><span>Они тебя видели и хуже. Все четверо давно уже не в том возрасте.</span></div>
+        <div class="card arg"><b>Ты это заслужил</b><span>Ты хорошо работал всю неделю. Один вечер с друзьями никому не повредит.</span></div>
+        <div class="card arg"><b>Ты вернёшься не поздно</b><span>Посидели, покурили, разъехались. Если не засиживаться, выспаться ещё как получится. Посчитай ниже.</span></div>
+        <div class="card arg"><b>Будильников можно поставить пять</b><span>На 6:30, 6:35, 6:40, 6:45 и «ну всё, точно вставай». Работает.</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Сколько ты поспишь <small>Посчитаем честно, с запасом 30 минут на то, чтобы заснуть.</small></h2>
+      <div class="card calc">
+        <div class="row">
+          <label>Вернусь домой в
+            <input type="time" id="home" value="02:00">
+          </label>
+          <label>Завтра встаю в
+            <input type="time" id="wake" value="07:00">
+          </label>
+        </div>
+        <div class="result">
+          <div class="hours" id="hours">4,5 ч</div>
+          <p class="verdict" id="verdict"></p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Как собраться <small>Отмечай по порядку. Галочки сохраняются на этом устройстве.</small></h2>
+      <ul class="steps" id="steps">
+        <li><label><input type="checkbox"><span class="t">Поставь будильник (и запасной)<small>Лучше два. И оба в другом конце комнаты.</small></span></label></li>
+        <li><label><input type="checkbox"><span class="t">Голова грязная? Помой (7 минут) или возьми кепку<small>Сухой шампунь тоже считается. Главное, чтобы ты вышел вовремя.</small></span></label></li>
+        <li><label><input type="checkbox"><span class="t">Приготовь одежду на завтра<small>Утром ты будешь собираться на автомате, так проще.</small></span></label></li>
+        <li><label><input type="checkbox"><span class="t">Поставь телефон на зарядку, но не забудь взять его с собой<small>Возьми повербанк, пусть будет.</small></span></label></li>
+        <li><label><input type="checkbox"><span class="t">Напиши в чат: «я в деле»<small>Друзья будут рады, и назад пути уже нет.</small></span></label></li>
+        <li><label><input type="checkbox"><span class="t">Выйди из дома к 00:00<small>Акция стартует в полночь, поэтому заранее вызови такси.</small></span></label></li>
+        <li><label><input type="checkbox"><span class="t">Договорись, во сколько расходитесь<small>Например, в 02:00. Скажи это вслух, чтобы все слышали.</small></span></label></li>
+        <li><label><input type="checkbox"><span class="t">Дома выпей воды и сразу ложись<small>Никаких «ещё одной серии».</small></span></label></li>
+      </ul>
+      <div class="done" id="done"></div>
+    </section>
+
+    <div class="actions">
+      <a class="cta" href="https://web.telegram.org/" id="cta">Я в деле 💨</a>
+      <p class="ghost">Передумал? <a href="index.html">Вернуться к таймеру</a></p>
+    </div>
+
+    <p class="note">Шутка, но в каждой шутке... Курение вредит здоровью. 18+. Не забывай про сон и ответственные решения.</p>
+  </main>
+
+<script>
+(function () {
+  // ----- калькулятор сна -----
+  var home = document.getElementById('home'), wake = document.getElementById('wake');
+  var hours = document.getElementById('hours'), verdict = document.getElementById('verdict');
+  function mins(v) { var p = (v || '0:0').split(':'); return (+p[0]) * 60 + (+p[1]); }
+  function calc() {
+    var h = mins(home.value), w = mins(wake.value);
+    var diff = (w - h + 1440) % 1440;       // сколько минут между «домой» и «встаю»
+    var sleep = Math.max(0, diff - 30);      // минус полчаса на засыпание
+    var hh = sleep / 60;
+    hours.textContent = (Math.round(hh * 10) / 10).toString().replace('.', ',') + ' ч';
+    var t;
+    if (hh >= 7) t = 'Это же полноценный сон. Вообще не повод сидеть дома.';
+    else if (hh >= 5) t = 'Нормально! Утром кофе, и ты как огурец.';
+    else if (hh >= 3.5) t = 'Бывало и хуже. Два кофе, и день пройдёт.';
+    else if (hh >= 2) t = 'Ну… героизм, но друзья оценят. Может, вернуться пораньше?';
+    else t = 'Тут уже, пожалуй, стоит уйти пораньше. Выбери время побольше.';
+    verdict.textContent = t;
+  }
+  home.addEventListener('input', calc); wake.addEventListener('input', calc); calc();
+
+  // ----- чек-лист (с запоминанием) -----
+  var KEY = 'morning-steps-v2';
+  var boxes = [].slice.call(document.querySelectorAll('#steps input'));
+  var done = document.getElementById('done');
+  var saved = [];
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) {}
+  boxes.forEach(function (b, i) { b.checked = !!saved[i]; });
+  function upd() {
+    var n = boxes.filter(function (b) { return b.checked; }).length;
+    done.textContent = n === boxes.length ? 'Всё готово. Теперь точно пора ехать! 💨'
+      : n ? 'Выполнено ' + n + ' из ' + boxes.length : '';
+  }
+  boxes.forEach(function (b) {
+    b.addEventListener('change', function () {
+      try { localStorage.setItem(KEY, JSON.stringify(boxes.map(function (x) { return x.checked; }))); } catch (e) {}
+      upd();
+    });
+  });
+  upd();
+
+  // ----- кольца дыма на фоне -----
+  var rings = document.getElementById('rings');
+  for (var i = 0; i < 5; i++) {
+    var r = document.createElement('div');
+    r.className = 'ring';
+    r.style.setProperty('--x', (Math.random() * 90 + 2).toFixed(1) + '%');
+    r.style.setProperty('--s', (50 + Math.random() * 90).toFixed(0) + 'px');
+    r.style.setProperty('--d', (14 + Math.random() * 14).toFixed(1) + 's');
+    r.style.setProperty('--delay', (-Math.random() * 20).toFixed(1) + 's');
+    r.style.setProperty('--sway', ((Math.random() - .5) * 160).toFixed(0) + 'px');
+    rings.appendChild(r);
+  }
+
+  // ----- кнопка: открыть Telegram (приложение, иначе веб-версия) -----
+  document.getElementById('cta').addEventListener('click', function (e) {
+    e.preventDefault();
+    var left = false;
+    function onHide() { if (document.hidden) left = true; }
+    document.addEventListener('visibilitychange', onHide);
+    window.addEventListener('pagehide', function () { left = true; });
+    location.href = 'tg://';
+    setTimeout(function () {
+      document.removeEventListener('visibilitychange', onHide);
+      if (!left && !document.hidden) window.open('https://web.telegram.org/', '_blank', 'noopener');
+    }, 1500);
+  });
+})();
+</script>
+</body>
+</html>
