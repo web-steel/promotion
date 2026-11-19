@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0614">
+<title>Кальянная акция — таймер</title>
+<meta name="description" content="Сколько осталось до ночной акции в кальянной. Минское время.">
+<style>
+  :root {
+    --bg: #0b0614;
+    --bg-2: #160a2b;
+    --text: #f4eefc;
+    --muted: #a99bc4;
+    --accent: #ff4fd8;
+    --accent-2: #7a5cff;
+    --accent-3: #27e1ff;
+    --go: #4dffb0;
+    --go-2: #ffd84d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: radial-gradient(120% 90% at 50% 0%, var(--bg-2) 0%, var(--bg) 60%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    display: grid;
+    place-items: center;
+    padding: 24px 16px;
+    transition: background .8s ease;
+  }
+
+  /* ---------- дым на фоне ---------- */
+  .smoke { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+  .blob {
+    position: absolute; border-radius: 50%; filter: blur(70px); opacity: .45;
+    will-change: transform;
+  }
+  .b1 { width: 55vmax; height: 55vmax; left: -15vmax; top: -10vmax;
+        background: radial-gradient(circle, var(--accent-2), transparent 65%);
+        animation: drift1 22s ease-in-out infinite alternate; }
+  .b2 { width: 50vmax; height: 50vmax; right: -18vmax; top: 15vh;
+        background: radial-gradient(circle, var(--accent), transparent 65%);
+        animation: drift2 26s ease-in-out infinite alternate; }
+  .b3 { width: 45vmax; height: 45vmax; left: 10vw; bottom: -22vmax;
+        background: radial-gradient(circle, var(--accent-3), transparent 65%);
+        opacity: .3;
+        animation: drift3 30s ease-in-out infinite alternate; }
+  @keyframes drift1 { to { transform: translate(18vmax, 12vmax) scale(1.15); } }
+  @keyframes drift2 { to { transform: translate(-16vmax, -8vmax) scale(1.2); } }
+  @keyframes drift3 { to { transform: translate(14vmax, -12vmax) scale(.9); } }
+
+  .rings { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .ring {
+    position: absolute; bottom: -40px; left: var(--x);
+    width: var(--s); height: calc(var(--s) * .55);
+    border: 3px solid rgba(255,255,255,.35);
+    border-radius: 50%; filter: blur(3px); opacity: 0;
+    animation: rise var(--d) linear infinite; animation-delay: var(--delay);
+  }
+  @keyframes rise {
+    0%   { transform: translateY(0) scale(.6); opacity: 0; }
+    15%  { opacity: .55; }
+    100% { transform: translateY(-105vh) translateX(var(--sway)) scale(1.9); opacity: 0; }
+  }
+
+  /* ---------- контент ---------- */
+  main {
+    position: relative; z-index: 1;
+    width: min(960px, 100%);
+    text-align: center;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px; border-radius: 999px;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.14);
+    backdrop-filter: blur(8px);
+    font-size: clamp(12px, 2.8vw, 14px);
+    letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .3; transform: scale(.7); } }
+
+  h1 {
+    margin: 28px auto 8px;
+    font-size: clamp(22px, 5.2vw, 40px);
+    line-height: 1.2; font-weight: 700; max-width: 22ch;
+    text-wrap: balance;
+  }
+  .sub {
+    color: var(--muted);
+    font-size: clamp(15px, 3.4vw, 19px);
+    min-height: 2.6em; max-width: 36ch; margin: 0 auto;
+    text-wrap: balance;
+    transition: opacity .3s;
+  }
+
+  /* таймер */
+  .timer {
+    display: flex; justify-content: center; align-items: flex-start;
+    gap: clamp(6px, 2vw, 22px);
+    margin: clamp(28px, 6vh, 56px) 0;
+  }
+  .unit { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .box {
+    min-width: 1.35em;
+    padding: .14em .12em .1em;
+    font-size: clamp(44px, 15vw, 190px);
+    font-weight: 800; line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.02em;
+    border-radius: .14em;
+    background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
+    border: 1px solid rgba(255,255,255,.16);
+    box-shadow: 0 20px 60px rgba(122,92,255,.25), inset 0 1px 0 rgba(255,255,255,.2);
+    backdrop-filter: blur(10px);
+    background-clip: padding-box;
+    position: relative;
+    overflow: hidden;
+  }
+  .box span {
+    background: linear-gradient(180deg, #fff 10%, #d8c8ff 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    display: inline-block;
+  }
+  .box::after { /* линия-«перегиб» как у табло */
+    content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px;
+    background: rgba(11,6,20,.55);
+  }
+  .box.tick span { animation: tick .35s ease-out; }
+  @keyframes tick { from { transform: translateY(-14%); opacity: .4; } to { transform: none; opacity: 1; } }
+  .label { font-size: clamp(11px, 2.6vw, 15px); letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+  .sep {
+    font-size: clamp(32px, 10vw, 130px); font-weight: 800; line-height: 1;
+    padding-top: .2em; color: var(--accent); opacity: .8;
+    animation: blink 1s steps(2, jump-none) infinite;
+  }
+  @keyframes blink { 50% { opacity: .15; } }
+
+  .foot { color: var(--muted); font-size: clamp(12px, 2.8vw, 14px); }
+  .foot b { color: var(--text); font-weight: 600; }
+
+  /* ---------- режим «акция идёт» ---------- */
+  .go { display: none; }
+  body.live { background: radial-gradient(120% 90% at 50% 0%, #0d2a2a 0%, #060f14 62%); }
+  body.live .timer, body.live .count-only { display: none; }
+  body.live .go { display: block; animation: pop .8s cubic-bezier(.2,1.4,.4,1) both; }
+  body.live .b1 { background: radial-gradient(circle, var(--go), transparent 65%); }
+  body.live .b2 { background: radial-gradient(circle, var(--go-2), transparent 65%); }
+  body.live .b3 { background: radial-gradient(circle, var(--accent-3), transparent 65%); }
+  body.live .dot { background: var(--go); box-shadow: 0 0 12px var(--go); }
+  @keyframes pop { from { transform: scale(.7); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  .go-title {
+    font-size: clamp(44px, 14vw, 150px);
+    font-weight: 900; line-height: .98; letter-spacing: -.03em;
+    margin: clamp(24px, 5vh, 48px) 0 18px;
+    background: linear-gradient(95deg, var(--go), var(--go-2), var(--accent-3), var(--go));
+    background-size: 250% 100%;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: shine 5s linear infinite;
+    text-wrap: balance;
+  }
+  @keyframes shine { to { background-position: 250% 0; } }
+  .go-text { font-size: clamp(17px, 4vw, 26px); max-width: 28ch; margin: 0 auto 26px; text-wrap: balance; }
+  .cta {
+    display: inline-block; text-decoration: none;
+    padding: 16px 34px; border-radius: 999px;
+    font-size: clamp(16px, 3.6vw, 20px); font-weight: 800; letter-spacing: .02em;
+    color: #04130d; background: linear-gradient(95deg, var(--go), var(--go-2));
+    box-shadow: 0 10px 40px rgba(77,255,176,.4);
+    animation: bump 1.4s ease-in-out infinite;
+  }
+  @keyframes bump { 50% { transform: scale(1.06); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="smoke" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+  <div class="rings" id="rings" aria-hidden="true"></div>
+
+  <main>
+    <div class="badge"><span class="dot"></span><span id="badge">Минск · акция в 00:00</span></div>
+
+    <!-- до акции -->
+    <section class="count-only" id="waiting">
+      <h1 id="title">Друзья, до акции осталось…</h1>
+      <p class="sub" id="sub"></p>
+    </section>
+
+    <div class="timer" id="timer" role="timer" aria-live="off">
+      <div class="unit"><div class="box" id="hh"><span>00</span></div><div class="label">часов</div></div>
+      <div class="sep">:</div>
+      <div class="unit"><div class="box" id="mm"><span>00</span></div><div class="label">минут</div></div>
+      <div class="sep">:</div>
+      <div class="unit"><div class="box" id="ss"><span>00</span></div><div class="label">секунд</div></div>
+    </div>
+
+    <p class="foot count-only">Акция стартует в <b>00:00</b> по минскому времени и идёт до <b>04:00</b></p>
+
+    <!-- акция идёт -->
+    <section class="go" id="live">
+      <h2 class="go-title">ПОРА КУРИТЬ КАЛЬЯН!</h2>
+      <p class="go-text">Друзья, всё — акция уже идёт. Хватит ждать, собираемся и едем!</p>
+      <a class="cta" href="#" id="cta">Погнали 💨</a>
+      <p class="foot" style="margin-top:22px">Акция действует до <b>04:00</b></p>
+    </section>
+  </main>
+
+<script>
+(function () {
+  var TZ = 'Europe/Minsk';
+  var START = 0;            // начало акции, секунд от полуночи
+  var END = 4 * 3600;       // конец акции (04:00)
+  var DAY = 86400;
+
+  // Для проверки: ?t=23:59:50 подменяет «текущее» минское время (тикает как обычно)
+  var override = null;
+  var m = /[?&]t=(\d{1,2}):(\d{2})(?::(\d{2}))?/.exec(location.search);
+  if (m) override = { base: (+m[1]) * 3600 + (+m[2]) * 60 + (+(m[3] || 0)), at: Date.now() };
+
+  var fmt = new Intl.DateTimeFormat('en-GB', {
+    timeZone: TZ, hourCycle: 'h23', hour: '2-digit', minute: '2-digit', second: '2-digit'
+  });
+  function minskSeconds() {
+    if (override) return (override.base + Math.floor((Date.now() - override.at) / 1000)) % DAY;
+    var p = fmt.formatToParts(new Date()), v = {};
+    p.forEach(function (x) { v[x.type] = +x.value; });
+    return v.hour * 3600 + v.minute * 60 + v.second;
+  }
+
+  // фразы по мере приближения акции (ключ — «осталось меньше, чем N секунд»)
+  var PHRASES = [
+    [60,        'Последняя минута. Обувайтесь!'],
+    [5 * 60,    'Пять минут — вызываем такси!'],
+    [15 * 60,   'Пора собираться, братва, уже совсем скоро.'],
+    [3600,      'Меньше часа. Пишем в чат, кто едет.'],
+    [2 * 3600,  'Ещё чуть-чуть. Можно начинать собираться.'],
+    [4 * 3600,  'Потерпите, друзья — вечер ещё впереди.'],
+    [8 * 3600,  'Ещё рано, но кальян уже ждёт.'],
+    [DAY,       'Терпение, друзья. Накапливаем жажду кальяна.']
+  ];
+  var TITLES = [
+    [3600, 'Друзья, акция совсем скоро!'],
+    [DAY,  'Друзья, до акции осталось…']
+  ];
+  function pick(list, left) {
+    for (var i = 0; i < list.length; i++) if (left <= list[i][0]) return list[i][1];
+    return list[list.length - 1][1];
+  }
+
+  var el = {
+    hh: document.getElementById('hh'), mm: document.getElementById('mm'), ss: document.getElementById('ss'),
+    title: document.getElementById('title'), sub: document.getElementById('sub'),
+    badge: document.getElementById('badge')
+  };
+  var last = { hh: '', mm: '', ss: '' }, lastLive = null, lastTitle = '', lastSub = '';
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function setDigit(key, val) {
+    if (last[key] === val) return;
+    last[key] = val;
+    var box = el[key], span = box.firstElementChild;
+    span.textContent = val;
+    box.classList.remove('tick'); void box.offsetWidth; box.classList.add('tick');
+  }
+
+  function render() {
+    var s = minskSeconds();
+    var live = s >= START && s < END;   // 00:00–03:59:59 — акция идёт
+
+    if (live !== lastLive) {
+      lastLive = live;
+      document.body.classList.toggle('live', live);
+      el.badge.textContent = live ? 'Акция идёт · до 04:00' : 'Минск · акция в 00:00';
+      document.title = live ? 'ПОРА КУРИТЬ КАЛЬЯН!' : 'Кальянная акция — таймер';
+    }
+    if (live) return;
+
+    var left = DAY - s;                  // до ближайших 00:00
+    setDigit('hh', pad(Math.floor(left / 3600)));
+    setDigit('mm', pad(Math.floor(left % 3600 / 60)));
+    setDigit('ss', pad(left % 60));
+
+    var t = pick(TITLES, left), p = pick(PHRASES, left);
+    if (t !== lastTitle) { el.title.textContent = lastTitle = t; }
+    if (p !== lastSub) { el.sub.textContent = lastSub = p; }
+    document.title = pad(Math.floor(left / 3600)) + ':' + pad(Math.floor(left % 3600 / 60)) + ':' + pad(left % 60) + ' до акции';
+  }
+
+  // кольца дыма
+  var rings = document.getElementById('rings');
+  for (var i = 0; i < 9; i++) {
+    var r = document.createElement('div');
+    r.className = 'ring';
+    r.style.setProperty('--x', (Math.random() * 90 + 2).toFixed(1) + '%');
+    r.style.setProperty('--s', (50 + Math.random() * 90).toFixed(0) + 'px');
+    r.style.setProperty('--d', (14 + Math.random() * 14).toFixed(1) + 's');
+    r.style.setProperty('--delay', (-Math.random() * 20).toFixed(1) + 's');
+    r.style.setProperty('--sway', ((Math.random() - .5) * 160).toFixed(0) + 'px');
+    rings.appendChild(r);
+  }
+
+  document.getElementById('cta').addEventListener('click', function (e) {
+    e.preventDefault();
+    // сюда можно подставить ссылку на кальянную / чат друзей / карту
+  });
+
+  render();
+  setInterval(render, 250);
+})();
+</script>
+</body>
+</html>
