@@ -376,11 +376,24 @@
     rings.appendChild(r);
   }
 
-  // Ссылка на ваш чат в Telegram: https://t.me/+xxxxxxxx (приватная группа) или https://t.me/username (публичная)
+  // Кнопка «Погнали» открывает Telegram. Если появится ссылка на группу (https://t.me/+xxxx), впишите её сюда.
   var TG_URL = '';
   var cta = document.getElementById('cta');
-  if (TG_URL) { cta.href = TG_URL; cta.target = '_blank'; cta.rel = 'noopener'; }
-  else cta.addEventListener('click', function (e) { e.preventDefault(); });
+  cta.href = TG_URL || 'https://web.telegram.org/';
+  if (TG_URL) { cta.target = '_blank'; cta.rel = 'noopener'; }
+  else cta.addEventListener('click', function (e) {
+    e.preventDefault();
+    // сначала пробуем приложение; если страница осталась на экране — открываем веб-версию
+    var left = false;
+    function onHide() { if (document.hidden) left = true; }
+    document.addEventListener('visibilitychange', onHide);
+    window.addEventListener('pagehide', function () { left = true; });
+    location.href = 'tg://';
+    setTimeout(function () {
+      document.removeEventListener('visibilitychange', onHide);
+      if (!left && !document.hidden) window.open('https://web.telegram.org/', '_blank', 'noopener');
+    }, 1500);
+  });
 
   render();
   setInterval(render, 250);
