@@ -4,6 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#030106">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Кальян">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%92%A8%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="Кальянная акция: таймер до 00:00">
+<meta property="og:description" content="Сколько осталось до акции. Когда будет 00:00, пора курить кальян. Минское время.">
+<meta property="og:url" content="https://web-steel.github.io/promotion/">
+<meta property="og:image" content="https://web-steel.github.io/promotion/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
 <title>Кальянная акция — таймер</title>
 <meta name="description" content="Сколько осталось до ночной акции в кальянной. Минское время.">
 <style>
@@ -19,23 +36,26 @@
     --go-2: #ffd84d;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
+  html { background: #030106; height: 100%; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  a, button, label { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
   body {
     background: radial-gradient(120% 90% at 50% 0%, var(--bg-2) 0%, var(--bg) 60%);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
     min-height: 100dvh;
     overflow-x: hidden;
     display: grid;
     place-items: center;
-    padding: 24px 16px;
+    /* безопасные зоны: вырез, «остров», полоска «домой» */
+    padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
     transition: background .8s ease;
   }
 
   /* ---------- дым на фоне ---------- */
   .smoke { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
   .blob {
-    position: absolute; border-radius: 50%; filter: blur(80px); opacity: .26;
+    position: absolute; border-radius: 50%; opacity: .32;
     will-change: transform;
   }
   .b1 { width: 55vmax; height: 55vmax; left: -15vmax; top: -10vmax;
@@ -75,8 +95,8 @@
     transition: color .8s ease;
   }
   .hookah svg { width: 100%; height: 100%; display: block; }
-  .hk-l { left: -2vw; height: min(88vh, 860px); opacity: .8; }
-  .hk-r { right: 1vw; height: min(70vh, 680px); opacity: .5; transform: scaleX(-1); filter: blur(1.5px) drop-shadow(0 0 28px rgba(122,92,255,.2)); }
+  .hk-l { left: -2vw; height: min(88vh, 860px); height: min(88dvh, 860px); opacity: .8; }
+  .hk-r { right: 1vw; height: min(70vh, 680px); height: min(70dvh, 680px); opacity: .5; transform: scaleX(-1); filter: blur(1.5px) drop-shadow(0 0 28px rgba(122,92,255,.2)); }
   body.live .hookah { color: var(--go); filter: drop-shadow(0 0 28px rgba(77,255,176,.25)); }
   body.live .hk-r { filter: blur(1.5px) drop-shadow(0 0 28px rgba(77,255,176,.18)); }
   #smoke-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
@@ -85,8 +105,12 @@
     background: radial-gradient(ellipse at 50% 45%, transparent 35%, rgba(0,0,0,.7) 100%);
   }
   @media (max-width: 640px) {
-    .hk-l { left: -14vw; height: 68vh; opacity: .6; }
-    .hk-r { right: -12vw; height: 52vh; opacity: .4; }
+    .hk-l { left: -14vw; height: 68vh; height: 68dvh; opacity: .6; }
+    .hk-r { right: -12vw; height: 52vh; height: 52dvh; opacity: .4; }
+  }
+  /* на телефонах убираем дорогие фильтры (drop-shadow / blur) */
+  @media (max-width: 640px), (pointer: coarse) {
+    .hookah, .hk-r, body.live .hookah, body.live .hk-r { filter: none; }
   }
 
   /* ---------- контент ---------- */
@@ -100,6 +124,7 @@
     padding: 8px 16px; border-radius: 999px;
     background: rgba(255,255,255,.07);
     border: 1px solid rgba(255,255,255,.14);
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     font-size: clamp(12px, 2.8vw, 14px);
     letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
@@ -131,7 +156,7 @@
   .box {
     min-width: 1.35em;
     padding: .14em .12em .1em;
-    font-size: clamp(44px, 15vw, 190px);
+    font-size: clamp(44px, min(15vw, 30vh), 190px);
     font-weight: 800; line-height: 1;
     font-variant-numeric: tabular-nums;
     letter-spacing: -.02em;
@@ -139,6 +164,7 @@
     background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.015));
     border: 1px solid rgba(255,255,255,.11);
     box-shadow: 0 20px 60px rgba(0,0,0,.55), 0 0 50px rgba(122,92,255,.12), inset 0 1px 0 rgba(255,255,255,.14);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     background-clip: padding-box;
     position: relative;
@@ -157,7 +183,7 @@
   @keyframes tick { from { transform: translateY(-14%); opacity: .4; } to { transform: none; opacity: 1; } }
   .label { font-size: clamp(11px, 2.6vw, 15px); letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
   .sep {
-    font-size: clamp(32px, 10vw, 130px); font-weight: 800; line-height: 1;
+    font-size: clamp(32px, min(10vw, 20vh), 130px); font-weight: 800; line-height: 1;
     padding-top: .2em; color: var(--accent); opacity: .8;
     animation: blink 1s steps(2, jump-none) infinite;
   }
@@ -178,7 +204,7 @@
   @keyframes pop { from { transform: scale(.7); opacity: 0; } to { transform: none; opacity: 1; } }
 
   .go-title {
-    font-size: clamp(44px, 14vw, 150px);
+    font-size: clamp(40px, min(14vw, 22vh), 150px);
     font-weight: 900; line-height: .98; letter-spacing: -.03em;
     margin: clamp(24px, 5vh, 48px) 0 18px;
     background: linear-gradient(95deg, var(--go), var(--go-2), var(--accent-3), var(--go));
@@ -201,9 +227,10 @@
 
   .early {
     display: inline-block; margin-top: clamp(22px, 5vh, 40px);
-    padding: 11px 20px; border-radius: 999px; text-decoration: none;
+    padding: 12px 20px; line-height: 1.35; text-wrap: balance; min-height: 44px; border-radius: 999px; text-decoration: none;
     font-size: clamp(13px, 3.2vw, 15px); color: var(--muted);
     background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12);
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px); transition: color .2s, border-color .2s, background .2s;
   }
   .early b { color: var(--text); font-weight: 700; }
@@ -291,7 +318,7 @@
       <p class="foot" style="margin-top:22px">Акция действует до <b>04:00</b></p>
     </section>
 
-    <a class="early" href="morning.html">Рано вставать или грязная голова? <b>Читай сюда</b> <span aria-hidden="true">→</span></a>
+    <a class="early" href="morning.html">Рано вставать или грязная голова? <b style="white-space: nowrap">Читай сюда →</b></a>
   </main>
 
 <script>
@@ -311,9 +338,14 @@
   });
   function minskSeconds() {
     if (override) return (override.base + Math.floor((Date.now() - override.at) / 1000)) % DAY;
-    var p = fmt.formatToParts(new Date()), v = {};
-    p.forEach(function (x) { v[x.type] = +x.value; });
-    return v.hour * 3600 + v.minute * 60 + v.second;
+    try {
+      var p = fmt.formatToParts(new Date()), v = {};
+      p.forEach(function (x) { v[x.type] = +x.value; });
+      var r = v.hour * 3600 + v.minute * 60 + v.second;
+      if (r >= 0 && r < DAY) return r;
+    } catch (e) {}
+    var d = new Date(Date.now() + 3 * 3600 * 1000);   // запасной вариант: Минск = UTC+3 без перехода на летнее время
+    return d.getUTCHours() * 3600 + d.getUTCMinutes() * 60 + d.getUTCSeconds();
   }
 
   // фразы по мере приближения акции (ключ — «осталось меньше, чем N секунд»)
@@ -403,12 +435,16 @@
     location.href = 'tg://';
     setTimeout(function () {
       document.removeEventListener('visibilitychange', onHide);
-      if (!left && !document.hidden) window.open('https://web.telegram.org/', '_blank', 'noopener');
+      if (left || document.hidden) return;
+      if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) location.href = 'https://web.telegram.org/';   // на телефоне popup блокируется
+      else window.open('https://web.telegram.org/', '_blank', 'noopener');
     }, 1500);
   });
 
   render();
   setInterval(render, 250);
+  document.addEventListener('visibilitychange', render);   // телефон «проснулся» — сразу обновить
+  addEventListener('pageshow', render);
 
   // ---------- дым: частицы из чаш кальянов ----------
   (function () {
@@ -429,7 +465,7 @@
     var SP = { idle: sprite('214,196,255'), live: sprite('190,255,225') };
 
     function resize() {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = 1;   // дым мягкий, высокое разрешение не нужно: экономим батарею
       W = innerWidth; H = innerHeight;
       cv.width = W * dpr; cv.height = H * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -439,7 +475,7 @@
     var parts = [], MAX = 800, small = function () { return W < 640; };
 
     function spawn(x, y, big, amb) {
-      if (parts.length >= MAX) return;
+      if (parts.length >= (small() ? 380 : MAX)) return;
       var life = 380 + Math.random() * 300;
       parts.push({
         x: x, y: y,

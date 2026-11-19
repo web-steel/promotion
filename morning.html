@@ -4,6 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#030106">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Кальян">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%92%A8%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="Рано вставать или грязная голова? Всё равно идём">
+<meta property="og:description" content="Аргументы, калькулятор сна и чек-лист: почему стоит собраться и сгонять на кальян.">
+<meta property="og:url" content="https://web-steel.github.io/promotion/morning.html">
+<meta property="og:image" content="https://web-steel.github.io/promotion/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
 <title>Рано вставать или грязная голова? Всё равно идём</title>
 <meta name="description" content="Все аргументы, почему стоит собраться и сгонять на кальян, даже если завтра рано вставать или голова грязная.">
 <style>
@@ -15,17 +32,21 @@
     --card: rgba(255,255,255,.045); --line: rgba(255,255,255,.11);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #030106; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  a, button, label { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  /* background-attachment: fixed на iOS не работает, поэтому фон — отдельный fixed-слой */
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: radial-gradient(120% 90% at 50% 0%, var(--bg-2) 0%, var(--bg) 60%); }
   body {
-    background: radial-gradient(120% 90% at 50% 0%, var(--bg-2) 0%, var(--bg) 60%) fixed;
+    background: #030106;
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    min-height: 100dvh; overflow-x: hidden;
+    min-height: 100vh; min-height: 100dvh; overflow-x: hidden;
     line-height: 1.5;
   }
 
   /* фон: дым и виньетка */
   .smoke { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
-  .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .26; will-change: transform; }
+  .blob { position: absolute; border-radius: 50%; opacity: .32; will-change: transform; }
   .b1 { width: 55vmax; height: 55vmax; left: -15vmax; top: -10vmax; background: radial-gradient(circle, var(--accent-2), transparent 65%); animation: d1 22s ease-in-out infinite alternate; }
   .b2 { width: 50vmax; height: 50vmax; right: -18vmax; top: 25vh; background: radial-gradient(circle, var(--accent), transparent 65%); animation: d2 26s ease-in-out infinite alternate; }
   .b3 { width: 45vmax; height: 45vmax; left: 10vw; bottom: -22vmax; background: radial-gradient(circle, var(--accent-3), transparent 65%); opacity: .16; animation: d3 30s ease-in-out infinite alternate; }
@@ -44,14 +65,15 @@
   .vignette { position: fixed; inset: 0; z-index: 1; pointer-events: none;
     background: radial-gradient(ellipse at 50% 40%, transparent 35%, rgba(0,0,0,.65) 100%); }
 
-  main { position: relative; z-index: 2; width: min(760px, 100%); margin: 0 auto; padding: 28px 16px 64px; }
+  main { position: relative; z-index: 2; width: min(760px, 100%); margin: 0 auto;
+    padding: max(20px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(64px, calc(env(safe-area-inset-bottom) + 40px)) max(16px, env(safe-area-inset-left)); }
 
-  .back { display: inline-block; color: var(--muted); text-decoration: none; font-size: 14px; letter-spacing: .04em; padding: 8px 0; }
+  .back { display: inline-flex; align-items: center; min-height: 44px; color: var(--muted); text-decoration: none; font-size: 15px; letter-spacing: .04em; padding-right: 16px; }
   .back:hover { color: var(--text); }
 
   header { text-align: center; margin: 18px 0 34px; }
   .badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px;
-    background: rgba(255,255,255,.06); border: 1px solid var(--line); backdrop-filter: blur(8px);
+    background: rgba(255,255,255,.06); border: 1px solid var(--line); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
     font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
   h1 { margin: 22px auto 10px; font-size: clamp(30px, 8vw, 56px); line-height: 1.08; font-weight: 900; letter-spacing: -.02em; text-wrap: balance;
     background: linear-gradient(95deg, #fff, #d8c8ff 60%, var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -61,6 +83,7 @@
   h2 small { display: block; font-size: 14px; font-weight: 400; color: var(--muted); margin-top: 4px; letter-spacing: 0; }
 
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px;
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px); box-shadow: 0 16px 50px rgba(0,0,0,.4); }
 
   /* аргументы */
@@ -77,7 +100,7 @@
   .calc { display: grid; gap: 14px; }
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   label { display: grid; gap: 6px; font-size: 13px; color: var(--muted); letter-spacing: .04em; }
-  input[type=time] { font: inherit; font-size: 20px; font-weight: 700; color: var(--text); background: rgba(0,0,0,.35);
+  input[type=time] { -webkit-appearance: none; appearance: none; min-width: 0; min-height: 52px; text-align: left; font: inherit; font-size: 20px; font-weight: 700; color: var(--text); background: rgba(0,0,0,.35);
     border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; color-scheme: dark; width: 100%; }
   input[type=time]:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
   .result { text-align: center; padding-top: 4px; }
@@ -89,18 +112,18 @@
   .steps { list-style: none; display: grid; gap: 10px; }
   .steps li label { display: flex; align-items: flex-start; gap: 14px; cursor: pointer; padding: 14px 16px;
     background: var(--card); border: 1px solid var(--line); border-radius: 14px; font-size: 16px; color: var(--text); letter-spacing: 0; transition: background .2s, border-color .2s; }
-  .steps input { appearance: none; flex: none; width: 24px; height: 24px; margin-top: 1px; border-radius: 8px;
+  .steps input { -webkit-appearance: none; appearance: none; flex: none; width: 24px; height: 24px; margin-top: 1px; border-radius: 8px;
     border: 2px solid var(--muted); display: grid; place-items: center; cursor: pointer; transition: .2s; }
   .steps input:checked { background: linear-gradient(135deg, var(--go), var(--go-2)); border-color: transparent; }
   .steps input:checked::after { content: "✓"; color: #04130d; font-weight: 900; font-size: 15px; }
   .steps input:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
-  .steps li:has(input:checked) label { border-color: rgba(77,255,176,.4); background: rgba(77,255,176,.06); }
-  .steps li:has(input:checked) .t { text-decoration: line-through; color: var(--muted); }
+  .steps li.on label { border-color: rgba(77,255,176,.4); background: rgba(77,255,176,.06); }
+  .steps li.on .t { text-decoration: line-through; color: var(--muted); }
   .steps .t small { display: block; color: var(--muted); font-size: 14px; }
   .done { margin-top: 12px; text-align: center; color: var(--go); font-weight: 700; min-height: 1.5em; }
 
   .actions { margin-top: 46px; text-align: center; display: grid; gap: 14px; justify-items: center; }
-  .cta { display: inline-block; text-decoration: none; padding: 16px 34px; border-radius: 999px; font-size: 18px; font-weight: 800;
+  .cta { display: inline-block; text-decoration: none; padding: 17px 34px; border-radius: 999px; font-size: 18px; font-weight: 800;
     color: #04130d; background: linear-gradient(95deg, var(--go), var(--go-2)); box-shadow: 0 10px 40px rgba(77,255,176,.35);
     animation: bump 1.6s ease-in-out infinite; }
   @keyframes bump { 50% { transform: scale(1.05); } }
@@ -212,6 +235,7 @@
   try { saved = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) {}
   boxes.forEach(function (b, i) { b.checked = !!saved[i]; });
   function upd() {
+    boxes.forEach(function (b) { b.closest('li').classList.toggle('on', b.checked); });   // без :has() для старых телефонов
     var n = boxes.filter(function (b) { return b.checked; }).length;
     done.textContent = n === boxes.length ? 'Всё готово. Теперь точно пора ехать! 💨'
       : n ? 'Выполнено ' + n + ' из ' + boxes.length : '';
@@ -247,7 +271,9 @@
     location.href = 'tg://';
     setTimeout(function () {
       document.removeEventListener('visibilitychange', onHide);
-      if (!left && !document.hidden) window.open('https://web.telegram.org/', '_blank', 'noopener');
+      if (left || document.hidden) return;
+      if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) location.href = 'https://web.telegram.org/';   // на телефоне popup блокируется
+      else window.open('https://web.telegram.org/', '_blank', 'noopener');
     }, 1500);
   });
 })();
